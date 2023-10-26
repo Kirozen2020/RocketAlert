@@ -23,7 +23,7 @@ namespace RocketAlert
             this.WindowState = FormWindowState.Minimized;
             this.ShowInTaskbar = false;
 
-            notifyIcon1.ContextMenuStrip = contextMenuStrip1;
+            RocketAlert.ContextMenuStrip = contextMenuStrip1;
             timer1.Start();
 
             using (SettingForm settingsForm = new SettingForm())
@@ -35,14 +35,8 @@ namespace RocketAlert
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = true; // Cancel the default action (closing the form)
-            this.Hide(); // Hide the form instead of closing it
-        }
-
-        private void notifyIcon1_DoubleClick(object sender, EventArgs e)
-        {
-            this.Show();
-            this.WindowState = FormWindowState.Normal;
+            e.Cancel = true;
+            this.Hide();
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
