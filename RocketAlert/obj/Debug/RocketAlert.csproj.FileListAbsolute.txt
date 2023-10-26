@@ -1,0 +1,10 @@
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\bin\Debug\RocketAlert.exe.config
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\bin\Debug\RocketAlert.exe
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\bin\Debug\RocketAlert.pdb
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.csproj.AssemblyReference.cache
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.Form1.resources
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.Properties.Resources.resources
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.csproj.GenerateResource.cache
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.csproj.CoreCompileInputs.cache
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.exe
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.pdb
