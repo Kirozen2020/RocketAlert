@@ -12,7 +12,8 @@ namespace RocketAlert
 {
     public partial class SettingForm : Form
     {
-        List<string> regionsNames;
+        public List<string> regionsNames;
+        public List<string> selectedRegions;
         public SettingForm()
         {
             InitializeComponent();
@@ -29,13 +30,18 @@ namespace RocketAlert
                 foreach (var alert in alerts)
                 {
                     regionsNames.Add(alert.Data.ToString());
-                    Console.WriteLine($"Alert Date: {alert.AlertDate}, Title: {alert.Title}, Data: {alert.Data}, Category: {alert.Category}");
+                    //Console.WriteLine($"Alert Date: {alert.AlertDate}, Title: {alert.Title}, Data: {alert.Data}, Category: {alert.Category}");
                 }
             }
             else
             {
                 Console.WriteLine("Error reading JSON file.");
             }
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

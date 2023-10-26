@@ -1,17 +1,21 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static RocketAlert.JsonFileReader;
 
 namespace RocketAlert
 {
     public partial class Form1 : Form
     {
+        List<string> selectetRegions;
         public Form1()
         {
             InitializeComponent();
@@ -48,6 +52,7 @@ namespace RocketAlert
             using(SettingForm settingsForm = new SettingForm())
             {
                 settingsForm.ShowDialog();
+                selectetRegions = settingsForm.selectedRegions;
             }
         }
 
@@ -59,7 +64,39 @@ namespace RocketAlert
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            if (CheckNewRocketAlert())
+            {
 
+            }
+        }
+
+        private bool CheckNewRocketAlert()
+        {
+            try
+            {
+                string filePath = "path_to_your_json_file.json"; // Replace with the actual path
+                if (!File.Exists(filePath))
+                {
+                    throw new FileNotFoundException("File not found", filePath);
+                }
+
+                string jsonContent = File.ReadAllText(filePath);
+                List<Alert> alerts = JsonConvert.DeserializeObject<List<Alert>>(jsonContent);
+
+                foreach (var searchString in this.selectetRegions)
+                {
+                    if (alerts.Any(alert => alert.Data.Contains(searchString)))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }
