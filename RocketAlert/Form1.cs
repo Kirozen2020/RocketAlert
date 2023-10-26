@@ -23,6 +23,7 @@ namespace RocketAlert
             this.ShowInTaskbar = false;
 
             notifyIcon1.ContextMenuStrip = contextMenuStrip1;
+            timer1.Start();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -52,7 +53,13 @@ namespace RocketAlert
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            timer1.Stop();
             Application.Exit();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+
         }
     }
 }

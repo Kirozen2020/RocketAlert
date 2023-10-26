@@ -59,6 +59,7 @@
             this.Controls.Add(this.listBox1);
             this.Name = "SettingForm";
             this.Text = "SettingForm";
+            this.Load += new System.EventHandler(this.SettingForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
