@@ -44,7 +44,10 @@ namespace RocketAlert
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            using(SettingForm settingsForm = new SettingForm())
+            {
+                settingsForm.ShowDialog();
+            }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)

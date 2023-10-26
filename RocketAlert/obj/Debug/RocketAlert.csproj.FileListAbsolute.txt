@@ -8,3 +8,4 @@ C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj
 C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.csproj.CoreCompileInputs.cache
 C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.exe
 C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.pdb
+C:\Users\rozen\OneDrive\Рабочий стол\Work\RocketAlert\RocketAlert\obj\Debug\RocketAlert.SettingForm.resources
