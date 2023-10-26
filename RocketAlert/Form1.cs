@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,7 +17,8 @@ namespace RocketAlert
 {
     public partial class Form1 : Form
     {
-        List<string> selectetRegions;
+        List<string> selectetRegions = new List<string>();
+        string placeUnderAttack = null;
         public Form1()
         {
             InitializeComponent();
@@ -28,6 +31,12 @@ namespace RocketAlert
 
             notifyIcon1.ContextMenuStrip = contextMenuStrip1;
             timer1.Start();
+
+            using (SettingForm settingsForm = new SettingForm())
+            {
+                settingsForm.ShowDialog();
+                this.selectetRegions = settingsForm.selectedRegions;
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -52,7 +61,7 @@ namespace RocketAlert
             using(SettingForm settingsForm = new SettingForm())
             {
                 settingsForm.ShowDialog();
-                selectetRegions = settingsForm.selectedRegions;
+                this.selectetRegions = settingsForm.selectedRegions;
             }
         }
 
@@ -64,38 +73,65 @@ namespace RocketAlert
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (CheckNewRocketAlert())
+            CheckNewRocketAlert();
+            if (this.placeUnderAttack != null)
             {
-
+                using(AlertScreen  alertScreen = new AlertScreen())
+                {
+                    timer1.Stop();
+                    alertScreen.placeName = this.placeUnderAttack;
+                    alertScreen.ShowDialog();
+                    timer1.Start();
+                    this.placeUnderAttack = null;
+                }
             }
         }
 
-        private bool CheckNewRocketAlert()
+        private async void CheckNewRocketAlert()
         {
             try
             {
-                string filePath = "path_to_your_json_file.json"; // Replace with the actual path
-                if (!File.Exists(filePath))
-                {
-                    throw new FileNotFoundException("File not found", filePath);
-                }
+                string filePath = "https://www.oref.org.il/WarningMessages/History/AlertsHistory.json";
 
-                string jsonContent = File.ReadAllText(filePath);
+                HttpClient client = new HttpClient();
+                string jsonContent = await client.GetStringAsync(filePath);
+
                 List<Alert> alerts = JsonConvert.DeserializeObject<List<Alert>>(jsonContent);
 
-                foreach (var searchString in this.selectetRegions)
+                List<string> matchingStrings = new List<string>();
+
+                foreach(Alert alert in alerts)
                 {
-                    if (alerts.Any(alert => alert.Data.Contains(searchString)))
+                    foreach(string searc in this.selectetRegions)
                     {
-                        return true;
+                        if (alert.Data.Contains(searc))
+                        {
+                            TimeSpan timedif = DateTime.Now - alert.AlertDate;
+                            int diff = (int)timedif.TotalSeconds;
+                            if(diff < 10)
+                            {
+                                matchingStrings.Add(alert.Data.ToString());
+                            }
+                        }
                     }
                 }
 
-                return false;
+                if (matchingStrings.Count > 0)
+                {
+                    HashSet<string> uniq = new HashSet<string>(matchingStrings);
+                    matchingStrings = uniq.OrderBy(item => item).ToList();
+
+                    this.placeUnderAttack = string.Join(", ", matchingStrings);
+                }
+                else
+                {
+                    this.placeUnderAttack = null;
+                }
             }
             catch (Exception ex)
             {
-                return false;
+                Console.WriteLine("Error searching JSON file: " + ex.Message);
+                this.placeUnderAttack = null;
             }
         }
     }

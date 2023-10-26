@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
+using System.Windows.Forms;
 
 namespace RocketAlert
 {
@@ -31,6 +32,7 @@ namespace RocketAlert
             }
             catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
                 Console.WriteLine("Error reading JSON file: " + ex.Message);
                 return null;
             }

@@ -27,6 +27,7 @@ namespace RocketAlert
 
         private void AlertScreen_Load(object sender, EventArgs e)
         {
+            this.WindowState = FormWindowState.Maximized;
             lblNamePlace.Text = placeName;
             timer1.Start();
         }
