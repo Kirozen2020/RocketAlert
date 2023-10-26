@@ -21,6 +21,8 @@ namespace RocketAlert
         {
             this.WindowState = FormWindowState.Minimized;
             this.ShowInTaskbar = false;
+
+            notifyIcon1.ContextMenuStrip = contextMenuStrip1;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -33,6 +35,21 @@ namespace RocketAlert
         {
             this.Show();
             this.WindowState = FormWindowState.Normal;
+        }
+
+        private void updateLinkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
