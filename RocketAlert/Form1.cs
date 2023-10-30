@@ -11,14 +11,21 @@ namespace RocketAlert
 {
     public partial class Form1 : Form
     {
+
+        /// <summary>The selectet regions</summary>
         List<string> selectetRegions = new List<string>();
+        /// <summary>The place under attack</summary>
         string placeUnderAttack = null;
 
+        /// <summary>Initializes a new instance of the <see cref="Form1" /> class.</summary>
         public Form1()
         {
             InitializeComponent();
         }
 
+        /// <summary>Handles the Load event of the Form1 control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void Form1_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
@@ -34,12 +41,18 @@ namespace RocketAlert
             }
         }
 
+        /// <summary>Handles the FormClosing event of the Form1 control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="FormClosingEventArgs" /> instance containing the event data.</param>
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
             this.Hide();
         }
 
+        /// <summary>Handles the Click event of the settingsToolStripMenuItem control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using(SettingForm settingsForm = new SettingForm())
@@ -49,12 +62,18 @@ namespace RocketAlert
             }
         }
 
+        /// <summary>Handles the Click event of the exitToolStripMenuItem control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             timer1.Stop();
             Application.Exit();
         }
 
+        /// <summary>Handles the Tick event of the timer1 control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void timer1_Tick(object sender, EventArgs e)
         {
             CheckNewRocketAlert();
@@ -71,6 +90,7 @@ namespace RocketAlert
             }
         }
 
+        /// <summary>Checks the new rocket alert.</summary>
         private async void CheckNewRocketAlert()
         {
             try
