@@ -57,6 +57,7 @@
             this.lblNamePlace.Font = new System.Drawing.Font("Stencil", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblNamePlace.Location = new System.Drawing.Point(886, 442);
             this.lblNamePlace.Name = "lblNamePlace";
+            this.lblNamePlace.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblNamePlace.Size = new System.Drawing.Size(225, 76);
             this.lblNamePlace.TabIndex = 1;
             this.lblNamePlace.Text = "ירושלים";

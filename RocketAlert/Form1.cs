@@ -13,6 +13,7 @@ namespace RocketAlert
     {
         List<string> selectetRegions = new List<string>();
         string placeUnderAttack = null;
+
         public Form1()
         {
             InitializeComponent();

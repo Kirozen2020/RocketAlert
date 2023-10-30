@@ -24,31 +24,11 @@ namespace RocketAlert
         private async void SettingForm_Load(object sender, EventArgs e)
         {
             InitListOfNames();
-            //try
-            //{
-            //    string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Places.txt");
-            //    using (StreamReader sr = new StreamReader(filePath))
-            //    {
-            //        while (sr.EndOfStream)
-            //        {
-            //            regionsNames.Add(sr.ReadLine().ToString());
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"An error occurred: {ex.Message}");
-            //}
-
-            //HashSet<string> uniq = new HashSet<string>(this.regionsNames);
-            //this.regionsNames = uniq.OrderBy(item => item).ToList();
-
+            
             listBox1.DataSource = this.regionsNames;
             listBox1.Refresh();
             listBox1.SelectionMode = SelectionMode.MultiExtended;
         }
-
-        
 
         private void btnSave_Click(object sender, EventArgs e)
         {

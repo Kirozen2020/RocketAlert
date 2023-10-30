@@ -21,7 +21,9 @@ namespace RocketAlert
         private void AlertScreen_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;
-            lblNamePlace.Text = placeName;
+            label1.Left = (this.Width - label1.Width) / 2;
+            lblNamePlace.Text = this.placeName;
+            lblNamePlace.Left = (this.Width) / 2 - (lblNamePlace.Width)/2;
             timer1.Start();
         }
 
