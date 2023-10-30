@@ -59,7 +59,7 @@ namespace RocketAlert
             CheckNewRocketAlert();
             if (this.placeUnderAttack != null)
             {
-                using(AlertScreen  alertScreen = new AlertScreen())
+                using (AlertScreen alertScreen = new AlertScreen())
                 {
                     timer1.Stop();
                     alertScreen.placeName = this.placeUnderAttack;
@@ -80,7 +80,7 @@ namespace RocketAlert
                 string jsonContent = await client.GetStringAsync(filePath);
 
                 List<Alert> alerts = JsonConvert.DeserializeObject<List<Alert>>(jsonContent);
-
+                
                 List<string> matchingStrings = new List<string>();
 
                 foreach(Alert alert in alerts)
