@@ -83,22 +83,36 @@ namespace RocketAlert
                 
                 List<string> matchingStrings = new List<string>();
 
-                foreach(Alert alert in alerts)
+                if(this.selectetRegions.Contains("בחר הכל"))
                 {
-                    foreach(string searc in this.selectetRegions)
+                    foreach(Alert alert in alerts)
                     {
-                        if (alert.Data.Contains(searc))
+                        TimeSpan timedif = DateTime.Now - alert.AlertDate;
+                        int diff = (int)timedif.TotalSeconds;
+                        if (diff < 10)
                         {
-                            TimeSpan timedif = DateTime.Now - alert.AlertDate;
-                            int diff = (int)timedif.TotalSeconds;
-                            if(diff < 10)
+                            matchingStrings.Add(alert.Data.ToString());
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (Alert alert in alerts)
+                    {
+                        foreach (string searc in this.selectetRegions)
+                        {
+                            if (alert.Data.Contains(searc))
                             {
-                                matchingStrings.Add(alert.Data.ToString());
+                                TimeSpan timedif = DateTime.Now - alert.AlertDate;
+                                int diff = (int)timedif.TotalSeconds;
+                                if (diff < 10)
+                                {
+                                    matchingStrings.Add(alert.Data.ToString());
+                                }
                             }
                         }
                     }
                 }
-
                 if (matchingStrings.Count > 0)
                 {
                     HashSet<string> uniq = new HashSet<string>(matchingStrings);
