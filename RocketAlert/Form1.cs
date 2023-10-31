@@ -34,11 +34,27 @@ namespace RocketAlert
             RocketAlert.ContextMenuStrip = contextMenuStrip1;
             timer1.Start();
 
-            using (SettingForm settingsForm = new SettingForm())
+            SettingForm settingForm;
+            if(this.selectetRegions != null)
             {
-                settingsForm.ShowDialog();
-                this.selectetRegions = settingsForm.selectedRegions;
+                settingForm = new SettingForm(this.selectetRegions);
             }
+            else
+            {
+                settingForm = new SettingForm();
+            }
+            settingForm.Show();
+            this.selectetRegions = settingForm.selectedRegions;
+            //using (SettingForm settingsForm = new SettingForm())
+            //{
+
+            //    settingsForm.ShowDialog();
+            //    if(this.selectetRegions != null)
+            //    {
+            //        settingsForm.selectedRegions = this.selectetRegions;
+            //    }
+            //    this.selectetRegions = settingsForm.selectedRegions;
+            //}
         }
 
         /// <summary>Handles the FormClosing event of the Form1 control.</summary>
@@ -55,11 +71,23 @@ namespace RocketAlert
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using(SettingForm settingsForm = new SettingForm())
+            SettingForm settingForm;
+            if (this.selectetRegions != null)
             {
-                settingsForm.ShowDialog();
-                this.selectetRegions = settingsForm.selectedRegions;
+                settingForm = new SettingForm(this.selectetRegions);
             }
+            else
+            {
+                settingForm = new SettingForm();
+            }
+            settingForm.Show();
+            this.selectetRegions = settingForm.selectedRegions;
+
+            //using(SettingForm settingsForm = new SettingForm())
+            //{
+            //    settingsForm.ShowDialog();
+            //    this.selectetRegions = settingsForm.selectedRegions;
+            //}
         }
 
         /// <summary>Handles the Click event of the exitToolStripMenuItem control.</summary>

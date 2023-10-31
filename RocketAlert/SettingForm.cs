@@ -14,14 +14,27 @@ namespace RocketAlert
     public partial class SettingForm : Form
     {
         /// <summary>The regions names</summary>
-        List<string> regionsNames = new List<string>();
+        private List<string> regionsNames = new List<string>();
         /// <summary>The selected regions</summary>
         public List<string> selectedRegions;
+        /// <summary>The not selected regions</summary>
+        private List<string> notSelectedRegions;
+        /// <summary>The initial selected</summary>
+        private List<string> initialSelected;
 
         /// <summary>Initializes a new instance of the <see cref="SettingForm" /> class.</summary>
         public SettingForm()
         {
             InitializeComponent();
+            this.selectedRegions = null;
+        }
+        /// <summary>Initializes a new instance of the <see cref="SettingForm" /> class.</summary>
+        /// <param name="selected">The selected.</param>
+        public SettingForm(List<string> selected)
+        {
+            InitializeComponent();
+            this.selectedRegions = selected;
+            this.initialSelected = selected;
         }
 
         /// <summary>Handles the Load event of the SettingForm control.</summary>
@@ -29,16 +42,37 @@ namespace RocketAlert
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void SettingForm_Load(object sender, EventArgs e)
         {
-            this.selectedRegions = new List<string>();
             InitListOfNames();
+            if (this.selectedRegions.Count == 0)
+            {
+                this.selectedRegions = new List<string>();
+                this.initialSelected = new List<string>();
+                this.notSelectedRegions = this.regionsNames;
+            }
+            else
+            {
+                this.notSelectedRegions = this.regionsNames.Except(this.selectedRegions).ToList();
+            }
+
+            /*-----------------------------------------------------*/
 
             listBox1.ClearSelected();
             listBox1.Items.Clear();
-            foreach(var item in this.regionsNames)
-            {
-                listBox1.Items.Add(item);
-            }
             listBox1.SelectionMode = SelectionMode.MultiExtended;
+            foreach(var item in this.notSelectedRegions)
+            {
+                listBox1.Items.Add(item.ToString());
+            }
+
+            /*-----------------------------------------------------*/
+
+            listBox2.ClearSelected();
+            listBox2.Items.Clear();
+            listBox2.SelectionMode = SelectionMode.MultiExtended;
+            foreach (var item in this.selectedRegions)
+            {
+                listBox2.Items.Add(item.ToString());
+            }
         }
 
         /// <summary>Handles the Click event of the btnSave control.</summary>
@@ -46,19 +80,13 @@ namespace RocketAlert
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnSave_Click(object sender, EventArgs e)
         {
-            this.selectedRegions = this.selectedRegions.Distinct().ToList();
-            this.Close();
-        }
-
-        /// <summary>Handles the SelectedIndexChanged event of the listBox1 control.</summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            foreach(var selectedItem in listBox1.SelectedItems)
+            List<string> selected = new List<string>();
+            foreach(var item in listBox2.SelectedItems)
             {
-                this.selectedRegions.Add(selectedItem.ToString());
+                selected.Add(item.ToString());
             }
+            this.selectedRegions = selected.Distinct().ToList();
+            this.Close();
         }
 
         /// <summary>Initializes the list of names.</summary>
@@ -68,25 +96,10 @@ namespace RocketAlert
             this.regionsNames = str.Split(new[] { "\r\n" }, StringSplitOptions.None).ToList();
         }
 
-        private void tbSearch_TextChanged(object sender, EventArgs e)
-        {
-            TextBox tb = (TextBox)sender;
-
-            List<string> names = Filter(tb.Text);
-
-            listBox1.ClearSelected();
-            listBox1.Items.Clear();
-            foreach (var item in names)
-            {
-                listBox1.Items.Add(item);
-            }
-            listBox1.SelectionMode = SelectionMode.MultiSimple;
-        }
-
-        public List<string> Filter(string filter)
+        public List<string> Filter(string filter, List<string> value)
         {
             List<string> strings = new List<string>();
-            foreach(string item in this.regionsNames)
+            foreach(string item in value)
             {
                 if (item.Contains(filter))
                 {
@@ -94,6 +107,106 @@ namespace RocketAlert
                 }
             }
             return strings;
+        }
+
+        /// <summary>Handles the Click event of the btnCancel control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.selectedRegions = this.initialSelected;
+            this.Close();
+        }
+
+        /// <summary>Handles the Click event of the btnSelect control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        private void btnSelect_Click(object sender, EventArgs e)
+        {
+            List<object> selectedItems = new List<object>();
+            foreach(var item in listBox1.SelectedItems)
+            {
+                selectedItems.Add(item);
+            }
+            foreach(var item in selectedItems)
+            {
+                listBox1.Items.Remove(item.ToString());
+                this.notSelectedRegions.Remove(item.ToString());
+                this.selectedRegions.Add(item.ToString());
+            }
+            this.selectedRegions.Sort();
+            foreach(var item in this.selectedRegions)
+            {
+                listBox2.Items.Add(item.ToString());
+            }
+        }
+
+        /// <summary>Handles the Click event of the btnUnselect control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        private void btnUnselect_Click(object sender, EventArgs e)
+        {
+            List<object> selectedItems = new List<object>();
+            foreach (var item in listBox2.SelectedItems)
+            {
+                selectedItems.Add(item);
+            }
+            foreach (var item in selectedItems)
+            {
+                listBox2.Items.Remove(item.ToString());
+                this.selectedRegions.Remove(item.ToString());
+                this.notSelectedRegions.Add(item.ToString());
+            }
+            this.notSelectedRegions.Sort();
+            foreach(var item in this.notSelectedRegions)
+            {
+                listBox1.Items.Add(item.ToString());
+            }
+        }
+
+        /// <summary>Handles the TextChanged event of the tbSearchSelected control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        private void tbSearchSelected_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+
+            List<string> names = Filter(textBox.Text, this.selectedRegions);
+
+            if (names != null)
+            {
+                listBox2.ClearSelected();
+                listBox2.Items.Clear();
+                foreach (string name in names)
+                {
+                    listBox2.Items.Add(name);
+                }
+            }
+        }
+
+        /// <summary>Handles the TextChanged event of the tbSearchNotSelected control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        private void tbSearchNotSelected_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+
+            List<string> names = Filter(textBox.Text, this.notSelectedRegions);
+
+            if (names != null)
+            {
+                listBox1.ClearSelected();
+                listBox1.Items.Clear();
+                foreach (string name in names)
+                {
+                    listBox1.Items.Add(name);
+                }
+            }
+        }
+
+        private void SettingForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.selectedRegions = this.initialSelected;
         }
     }
 }
