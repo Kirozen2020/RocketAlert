@@ -21,6 +21,7 @@ namespace RocketAlert
         private List<string> notSelectedRegions;
         /// <summary>The initial selected</summary>
         private List<string> initialSelected;
+        public bool cancelAction = false;
 
         /// <summary>Initializes a new instance of the <see cref="SettingForm" /> class.</summary>
         public SettingForm()
@@ -34,7 +35,7 @@ namespace RocketAlert
         {
             InitializeComponent();
             this.selectedRegions = selected;
-            this.initialSelected = selected;
+            this.initialSelected = selected.ToList();
         }
 
         /// <summary>Handles the Load event of the SettingForm control.</summary>
@@ -42,6 +43,7 @@ namespace RocketAlert
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void SettingForm_Load(object sender, EventArgs e)
         {
+            this.cancelAction = false;
             InitListOfNames();
             if (this.selectedRegions.Count == 0)
             {
@@ -81,12 +83,14 @@ namespace RocketAlert
         private void btnSave_Click(object sender, EventArgs e)
         {
             List<string> selected = new List<string>();
-            foreach(var item in listBox2.SelectedItems)
+            foreach(var item in listBox2.Items)
             {
                 selected.Add(item.ToString());
             }
+            this.cancelAction = false;
             this.selectedRegions = selected.Distinct().ToList();
-            this.Close();
+            this.Visible = false;
+            //this.Close();
         }
 
         /// <summary>Initializes the list of names.</summary>
@@ -96,6 +100,12 @@ namespace RocketAlert
             this.regionsNames = str.Split(new[] { "\r\n" }, StringSplitOptions.None).ToList();
         }
 
+        /// <summary>Filters the specified filter.</summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
         public List<string> Filter(string filter, List<string> value)
         {
             List<string> strings = new List<string>();
@@ -114,8 +124,10 @@ namespace RocketAlert
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.selectedRegions = this.initialSelected;
-            this.Close();
+            this.cancelAction = true;
+            this.selectedRegions = this.initialSelected.ToList();
+            this.Visible = false;
+            //this.Close();
         }
 
         /// <summary>Handles the Click event of the btnSelect control.</summary>
@@ -137,7 +149,10 @@ namespace RocketAlert
             this.selectedRegions.Sort();
             foreach(var item in this.selectedRegions)
             {
-                listBox2.Items.Add(item.ToString());
+                if (!listBox2.Items.Contains(item.ToString()))
+                {
+                    listBox2.Items.Add(item.ToString());
+                }
             }
         }
 
@@ -160,7 +175,10 @@ namespace RocketAlert
             this.notSelectedRegions.Sort();
             foreach(var item in this.notSelectedRegions)
             {
-                listBox1.Items.Add(item.ToString());
+                if (!listBox1.Items.Contains(item.ToString()))
+                {
+                    listBox1.Items.Add(item.ToString());
+                }
             }
         }
 
@@ -206,7 +224,10 @@ namespace RocketAlert
 
         private void SettingForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            e.Cancel = true;
+            this.cancelAction = true;
             this.selectedRegions = this.initialSelected;
+            this.Visible = false;
         }
     }
 }

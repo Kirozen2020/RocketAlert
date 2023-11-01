@@ -75,7 +75,7 @@
             // 
             // tbSearchNotSelected
             // 
-            this.tbSearchNotSelected.Location = new System.Drawing.Point(24, 57);
+            this.tbSearchNotSelected.Location = new System.Drawing.Point(85, 57);
             this.tbSearchNotSelected.Name = "tbSearchNotSelected";
             this.tbSearchNotSelected.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tbSearchNotSelected.Size = new System.Drawing.Size(124, 20);
@@ -85,12 +85,12 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(171, 64);
+            this.label2.Font = new System.Drawing.Font("Aharoni", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(21, 59);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(45, 13);
+            this.label2.Size = new System.Drawing.Size(58, 16);
             this.label2.TabIndex = 4;
-            this.label2.Text = "חיפוש";
+            this.label2.Text = "Search";
             // 
             // btnCancel
             // 
@@ -135,16 +135,16 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(491, 64);
+            this.label3.Font = new System.Drawing.Font("Aharoni", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(341, 59);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(45, 13);
+            this.label3.Size = new System.Drawing.Size(58, 16);
             this.label3.TabIndex = 10;
-            this.label3.Text = "חיפוש";
+            this.label3.Text = "Search";
             // 
             // tbSearchSelected
             // 
-            this.tbSearchSelected.Location = new System.Drawing.Point(344, 57);
+            this.tbSearchSelected.Location = new System.Drawing.Point(405, 57);
             this.tbSearchSelected.Name = "tbSearchSelected";
             this.tbSearchSelected.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tbSearchSelected.Size = new System.Drawing.Size(124, 20);

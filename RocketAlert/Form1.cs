@@ -34,10 +34,12 @@ namespace RocketAlert
             RocketAlert.ContextMenuStrip = contextMenuStrip1;
             timer1.Start();
 
+            List<string> names = new List<string>();
             SettingForm settingForm;
-            if(this.selectetRegions != null)
+            if (this.selectetRegions != null)
             {
                 settingForm = new SettingForm(this.selectetRegions);
+                names = selectetRegions;
             }
             else
             {
@@ -45,16 +47,12 @@ namespace RocketAlert
             }
             settingForm.Show();
             this.selectetRegions = settingForm.selectedRegions;
-            //using (SettingForm settingsForm = new SettingForm())
-            //{
-
-            //    settingsForm.ShowDialog();
-            //    if(this.selectetRegions != null)
-            //    {
-            //        settingsForm.selectedRegions = this.selectetRegions;
-            //    }
-            //    this.selectetRegions = settingsForm.selectedRegions;
-            //}
+            if (!settingForm.Visible)
+            {
+                this.selectetRegions = names;
+                settingForm.Dispose();
+            }
+            
         }
 
         /// <summary>Handles the FormClosing event of the Form1 control.</summary>
@@ -71,23 +69,7 @@ namespace RocketAlert
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SettingForm settingForm;
-            if (this.selectetRegions != null)
-            {
-                settingForm = new SettingForm(this.selectetRegions);
-            }
-            else
-            {
-                settingForm = new SettingForm();
-            }
-            settingForm.Show();
-            this.selectetRegions = settingForm.selectedRegions;
-
-            //using(SettingForm settingsForm = new SettingForm())
-            //{
-            //    settingsForm.ShowDialog();
-            //    this.selectetRegions = settingsForm.selectedRegions;
-            //}
+            StartSettingsForm();
         }
 
         /// <summary>Handles the Click event of the exitToolStripMenuItem control.</summary>
@@ -111,7 +93,7 @@ namespace RocketAlert
                 {
                     timer1.Stop();
                     alertScreen.placeName = this.placeUnderAttack;
-                    alertScreen.ShowDialog();
+                    alertScreen.Show();
                     timer1.Start();
                     this.placeUnderAttack = null;
                 }
@@ -178,6 +160,34 @@ namespace RocketAlert
             {
                 Console.WriteLine("Error searching JSON file: " + ex.Message);
                 this.placeUnderAttack = null;
+            }
+        }
+
+        /// <summary>Handles the DoubleClick event of the RocketAlert control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        private void RocketAlert_DoubleClick(object sender, EventArgs e)
+        {
+            StartSettingsForm();
+        }
+
+        /// <summary>Starts the settings form.</summary>
+        private void StartSettingsForm()
+        {
+            SettingForm settingForm;
+            if (this.selectetRegions != null)
+            {
+                settingForm = new SettingForm(this.selectetRegions);
+            }
+            else
+            {
+                settingForm = new SettingForm();
+            }
+            settingForm.ShowDialog();
+            this.selectetRegions = settingForm.selectedRegions;
+            if (!settingForm.Visible)
+            {
+                settingForm.Dispose();
             }
         }
     }

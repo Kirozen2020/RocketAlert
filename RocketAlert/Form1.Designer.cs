@@ -43,6 +43,7 @@
             this.RocketAlert.Icon = ((System.Drawing.Icon)(resources.GetObject("RocketAlert.Icon")));
             this.RocketAlert.Text = "Rocket Alert";
             this.RocketAlert.Visible = true;
+            this.RocketAlert.DoubleClick += new System.EventHandler(this.RocketAlert_DoubleClick);
             // 
             // contextMenuStrip1
             // 
