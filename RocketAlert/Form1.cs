@@ -2,8 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using static RocketAlert.JsonFileReader;
 
@@ -16,13 +20,33 @@ namespace RocketAlert
         List<string> selectetRegions = new List<string>();
         /// <summary>The place under attack</summary>
         string placeUnderAttack = null;
+        /// <summary>The mutex</summary>
+        private static Mutex mutex = null;
 
         /// <summary>Initializes a new instance of the <see cref="Form1" /> class.</summary>
         public Form1()
         {
             InitializeComponent();
+            if (IsAlreadyRuning())
+            {
+                //Note: do somthing to prevent opening second time 
+                Environment.Exit(0);
+            }
         }
         
+        private bool IsAlreadyRuning()
+        {
+            const string appName = "RocketAlert";
+            bool createdNew;
+            mutex = new Mutex(true, appName, out createdNew);
+
+            if (!createdNew)
+            {
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>Handles the Load event of the Form1 control.</summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
@@ -52,7 +76,7 @@ namespace RocketAlert
                 this.selectetRegions = names;
                 settingForm.Dispose();
             }
-            
+
         }
 
         /// <summary>Handles the FormClosing event of the Form1 control.</summary>
@@ -78,7 +102,7 @@ namespace RocketAlert
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             timer1.Stop();
-            Application.Exit();
+            Environment.Exit(0);
         }
 
         /// <summary>Handles the Tick event of the timer1 control.</summary>
@@ -187,6 +211,11 @@ namespace RocketAlert
             this.selectetRegions = settingForm.selectedRegions;
             if (!settingForm.Visible)
             {
+                if (!settingForm.cancelAction)
+                {
+                    this.selectetRegions = settingForm.initialSelected;
+                }
+                
                 settingForm.Dispose();
             }
         }

@@ -20,7 +20,8 @@ namespace RocketAlert
         /// <summary>The not selected regions</summary>
         private List<string> notSelectedRegions;
         /// <summary>The initial selected</summary>
-        private List<string> initialSelected;
+        public List<string> initialSelected;
+        /// <summary>The cancel action</summary>
         public bool cancelAction = false;
 
         /// <summary>Initializes a new instance of the <see cref="SettingForm" /> class.</summary>
@@ -89,8 +90,8 @@ namespace RocketAlert
             }
             this.cancelAction = false;
             this.selectedRegions = selected.Distinct().ToList();
+            this.initialSelected = this.selectedRegions.ToList();
             this.Visible = false;
-            //this.Close();
         }
 
         /// <summary>Initializes the list of names.</summary>
@@ -127,7 +128,6 @@ namespace RocketAlert
             this.cancelAction = true;
             this.selectedRegions = this.initialSelected.ToList();
             this.Visible = false;
-            //this.Close();
         }
 
         /// <summary>Handles the Click event of the btnSelect control.</summary>
@@ -222,6 +222,9 @@ namespace RocketAlert
             }
         }
 
+        /// <summary>Handles the FormClosing event of the SettingForm control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="FormClosingEventArgs" /> instance containing the event data.</param>
         private void SettingForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
