@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -52,6 +53,13 @@ namespace RocketAlert
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void Form1_Load(object sender, EventArgs e)
         {
+            List<string> temp = ReadTextFile("RocketAlert", "SelectedRegionsSave");
+            temp.RemoveAll(string.IsNullOrWhiteSpace);
+            if(temp.Count > 0)
+            {
+                this.selectetRegions = temp.ToList();
+            }
+
             this.WindowState = FormWindowState.Minimized;
             this.ShowInTaskbar = false;
 
@@ -101,6 +109,8 @@ namespace RocketAlert
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            WriteTextFile(this.selectetRegions, "RocketAlert", "SelectedRegionsSave");
+
             timer1.Stop();
             Environment.Exit(0);
         }
@@ -218,6 +228,61 @@ namespace RocketAlert
                 
                 settingForm.Dispose();
             }
+        }
+
+        /// <summary>Writes the text file.</summary>
+        /// <param name="data">The data.</param>
+        /// <param name="customFolderName">Name of the custom folder.</param>
+        /// <param name="fileName">Name of the file.</param>
+        private static void WriteTextFile(List<string> data, string customFolderName, string fileName)
+        {
+            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            string customFolderPath = Path.Combine(documentsPath, customFolderName);
+
+            if (!Directory.Exists(customFolderPath))
+            {
+                Directory.CreateDirectory(customFolderPath);
+            }
+
+            string filePath = Path.Combine(customFolderPath, fileName);
+
+            using (StreamWriter sw = new StreamWriter(filePath, false))
+            {
+                foreach (string line in data)
+                {
+                    sw.WriteLine(line);
+                }
+            }
+        }
+
+        /// <summary>Reads the text file.</summary>
+        /// <param name="customFolderName">Name of the custom folder.</param>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        private static List<string> ReadTextFile(string customFolderName, string fileName)
+        {
+            List<string> data = new List<string>();
+
+            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            string filePath = Path.Combine(documentsPath, customFolderName, fileName);
+
+            if (File.Exists(filePath))
+            {
+                using (StreamReader sr = new StreamReader(filePath))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        data.Add(line);
+                    }
+                }
+            }
+
+            return data;
         }
     }
 }

@@ -54,7 +54,7 @@ namespace RocketAlert
             }
             else
             {
-                this.notSelectedRegions = this.regionsNames.Except(this.selectedRegions).ToList();
+                this.notSelectedRegions = GetDiffList(this.regionsNames, this.selectedRegions);
             }
 
             /*-----------------------------------------------------*/
@@ -102,6 +102,7 @@ namespace RocketAlert
             System.IO.Stream s = tmp.GetManifestResourceStream("RocketAlert.Places.txt");
             System.IO.StreamReader sr = new System.IO.StreamReader(s);
             this.regionsNames = sr.ReadToEnd().Split('\n').ToList();
+            sr.Close();
 
         }
 
@@ -235,6 +236,52 @@ namespace RocketAlert
             this.cancelAction = true;
             this.selectedRegions = this.initialSelected;
             this.Visible = false;
+        }
+
+        /// <summary>Gets the difference list.</summary>
+        /// <param name="list1">The list1.</param>
+        /// <param name="list2">The list2.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        private static List<string> GetDiffList(List<string> list1, List<string> list2)
+        {
+            List<string> difference = new List<string>();
+
+            foreach (string item in list1)
+            {
+                bool foundMatch = false;
+
+                List<string> words1 = SplitIntoWords(item);
+
+                foreach (string item2 in list2)
+                {
+                    List<string> words2 = SplitIntoWords(item2);
+
+                    if (words1.SequenceEqual(words2))
+                    {
+                        foundMatch = true;
+                        break;
+                    }
+                }
+
+                if (!foundMatch)
+                {
+                    difference.Add(item);
+                }
+            }
+
+            return difference;
+        }
+
+        /// <summary>Splits the into words.</summary>
+        /// <param name="input">The input.</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        private static List<string> SplitIntoWords(string input)
+        {
+            return input.Split(new char[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
     }
 }
