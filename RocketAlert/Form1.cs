@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -17,45 +18,33 @@ namespace RocketAlert
     public partial class Form1 : Form
     {
 
-        /// <summary>The selectet regions</summary>
+        /// <summary>
+        /// The selectet regions
+        /// </summary>
         List<string> selectetRegions = new List<string>();
-        /// <summary>The place under attack</summary>
+        /// <summary>
+        /// The place under attack
+        /// </summary>
         string placeUnderAttack = null;
-        /// <summary>The mutex</summary>
-        private static Mutex mutex = null;
-
-        /// <summary>Initializes a new instance of the <see cref="Form1" /> class.</summary>
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Form1"/> class.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
-            if (IsAlreadyRuning())
-            {
-                //Note: do somthing to prevent opening second time 
-                Environment.Exit(0);
-            }
-        }
-        
-        private bool IsAlreadyRuning()
-        {
-            const string appName = "RocketAlert";
-            bool createdNew;
-            mutex = new Mutex(true, appName, out createdNew);
-
-            if (!createdNew)
-            {
-                return true;
-            }
-            return false;
+            InitForm();
+            KillOtherInstances();
         }
 
-        /// <summary>Handles the Load event of the Form1 control.</summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void Form1_Load(object sender, EventArgs e)
+        /// <summary>
+        /// Initializes the form.
+        /// </summary>
+        private void InitForm()
         {
             List<string> temp = ReadTextFile("RocketAlert", "SelectedRegionsSave");
             temp.RemoveAll(string.IsNullOrWhiteSpace);
-            if(temp.Count > 0)
+            if (temp.Count > 0)
             {
                 this.selectetRegions = temp.ToList();
             }
@@ -84,16 +73,43 @@ namespace RocketAlert
                 this.selectetRegions = names;
                 settingForm.Dispose();
             }
-
         }
 
-        /// <summary>Handles the FormClosing event of the Form1 control.</summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="FormClosingEventArgs" /> instance containing the event data.</param>
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        /// <summary>
+        /// Kills the other instances.
+        /// </summary>
+        private void KillOtherInstances()
         {
-            e.Cancel = true;
-            this.Hide();
+            const string mutexName = "RocketAlertMutex";
+
+            using (Mutex mutex = new Mutex(true, mutexName, out bool createdNew))
+            {
+                if (!createdNew)
+                {
+                    // Another instance is running, don't attempt to kill it
+                    return;
+                }
+
+                // Attempt to find and close other instances
+                Process currentProcess = Process.GetCurrentProcess();
+                foreach (Process process in Process.GetProcessesByName(currentProcess.ProcessName))
+                {
+                    if (process.Id != currentProcess.Id)
+                    {
+                        // Close the other instance
+                        process.CloseMainWindow();
+
+                        // Wait for the process to exit
+                        process.WaitForExit(5000);
+
+                        // If the process hasn't exited, forcefully kill it
+                        if (!process.HasExited)
+                        {
+                            process.Kill();
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>Handles the Click event of the settingsToolStripMenuItem control.</summary>
@@ -125,16 +141,17 @@ namespace RocketAlert
             {
                 using (AlertScreen alertScreen = new AlertScreen())
                 {
-                    timer1.Stop();
                     alertScreen.placeName = this.placeUnderAttack;
                     alertScreen.Show();
-                    timer1.Start();
                     this.placeUnderAttack = null;
                 }
             }
+            WriteTextFile(this.selectetRegions, "RocketAlert", "SelectedRegionsSave");
         }
 
-        /// <summary>Checks the new rocket alert.</summary>
+        /// <summary>
+        /// Checks the new rocket alert.
+        /// </summary>
         private async void CheckNewRocketAlert()
         {
             try
@@ -205,7 +222,9 @@ namespace RocketAlert
             StartSettingsForm();
         }
 
-        /// <summary>Starts the settings form.</summary>
+        /// <summary>
+        /// Starts the settings form.
+        /// </summary>
         private void StartSettingsForm()
         {
             SettingForm settingForm;
