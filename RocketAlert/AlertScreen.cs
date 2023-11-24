@@ -5,7 +5,6 @@ namespace RocketAlert
 {
     public partial class AlertScreen : Form
     {
-
         /// <summary>
         /// Gets or sets the name of the place.
         /// </summary>
@@ -40,7 +39,7 @@ namespace RocketAlert
         {
             this.WindowState = FormWindowState.Maximized;
             label1.Left = (this.Width - label1.Width) / 2;
-            lblNamePlace.Text = this.placeName;
+            lblNamePlace.Text = InsertNewlineAfterEveryNth(this.placeName, 3);
             lblNamePlace.Left = (this.Width) / 2 - (lblNamePlace.Width)/2;
             timer1.Start();
         }
@@ -52,6 +51,31 @@ namespace RocketAlert
         {
             timer1.Stop();
             this.Close();
+        }
+
+        /// <summary>
+        /// Inserts the newline after every NTH.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="n">The n.</param>
+        /// <returns></returns>
+        static string InsertNewlineAfterEveryNth(string input, int n)
+        {
+            if (n <= 0)
+            {
+                // Invalid value for n, return the original string
+                return input;
+            }
+
+            string[] parts = input.Split(',');
+
+            for (int i = n; i < parts.Length; i += n + 1)
+            {
+                // Insert '\n' after every third parameter
+                parts[i] += "\n";
+            }
+
+            return string.Join(",", parts);
         }
     }
 }

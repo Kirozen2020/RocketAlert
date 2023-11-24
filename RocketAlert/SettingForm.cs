@@ -1,13 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Windows.Forms;
-using static RocketAlert.JsonFileReader;
 
 namespace RocketAlert
 {
@@ -24,12 +18,15 @@ namespace RocketAlert
         /// <summary>The cancel action</summary>
         public bool cancelAction = false;
 
-        /// <summary>Initializes a new instance of the <see cref="SettingForm" /> class.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SettingForm"/> class.
+        /// </summary>
         public SettingForm()
         {
             InitializeComponent();
             this.selectedRegions = null;
         }
+
         /// <summary>Initializes a new instance of the <see cref="SettingForm" /> class.</summary>
         /// <param name="selected">The selected.</param>
         public SettingForm(List<string> selected)
@@ -94,7 +91,9 @@ namespace RocketAlert
             this.Visible = false;
         }
 
-        /// <summary>Initializes the list of names.</summary>
+        /// <summary>
+        /// Initializes the list of names.
+        /// </summary>
         private void InitListOfNames()
         {
             var tmp = System.Reflection.IntrospectionExtensions.GetTypeInfo(typeof(SettingForm)).Assembly;

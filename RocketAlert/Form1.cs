@@ -4,14 +4,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using static RocketAlert.JsonFileReader;
 
 namespace RocketAlert
 {
@@ -26,7 +24,11 @@ namespace RocketAlert
         /// The place under attack
         /// </summary>
         string placeUnderAttack = null;
-        
+        /// <summary>
+        /// The alert screen instance
+        /// </summary>
+        private AlertScreen alertScreenInstance;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.
         /// </summary>
@@ -139,14 +141,19 @@ namespace RocketAlert
             CheckNewRocketAlert();
             if (this.placeUnderAttack != null)
             {
-                using (AlertScreen alertScreen = new AlertScreen())
+                if (alertScreenInstance == null || alertScreenInstance.IsDisposed || alertScreenInstance.Visible != Visible)
                 {
-                    alertScreen.placeName = this.placeUnderAttack;
-                    alertScreen.Show();
-                    this.placeUnderAttack = null;
+                    alertScreenInstance = new AlertScreen();
+                    alertScreenInstance.placeName = this.placeUnderAttack;
+                    alertScreenInstance.Show();
                 }
+                else
+                {
+                    alertScreenInstance.placeName = this.placeUnderAttack;
+                }
+
+                this.placeUnderAttack = null;
             }
-            WriteTextFile(this.selectetRegions, "RocketAlert", "SelectedRegionsSave");
         }
 
         /// <summary>
@@ -154,53 +161,52 @@ namespace RocketAlert
         /// </summary>
         private async void CheckNewRocketAlert()
         {
+            string filePath = "https://www.oref.org.il/WarningMessages/History/AlertsHistory.json";
             try
             {
-                string filePath = "https://www.oref.org.il/WarningMessages/History/AlertsHistory.json";
+                string jsonContent = await DownloadJsonAsync(filePath);
 
-                HttpClient client = new HttpClient();
-                string jsonContent = await client.GetStringAsync(filePath);
+                List<MyDataModel> alerts = JsonConvert.DeserializeObject<List<MyDataModel>>(jsonContent);
+                this.selectetRegions = this.selectetRegions.Select(s => s.Trim()).ToList();
+                alerts.ForEach(item => item.Data = item.Data?.Trim());
 
-                List<Alert> alerts = JsonConvert.DeserializeObject<List<Alert>>(jsonContent);
-                
-                List<string> matchingStrings = new List<string>();
+                List<string> matchingsStrings = new List<string>();
 
-                if(this.selectetRegions.Contains("בחר הכל"))
+                if (this.selectetRegions.Contains("בחר הכל"))
                 {
-                    foreach(Alert alert in alerts)
+                    foreach(MyDataModel alert in alerts)
                     {
-                        TimeSpan timedif = DateTime.Now - alert.AlertDate;
-                        int diff = (int)timedif.TotalSeconds;
-                        if (diff < 10)
+                        TimeSpan timeDif = DateTime.Now - alert.AlertDate;
+                        if((int)timeDif.TotalSeconds < 10)
                         {
-                            matchingStrings.Add(alert.Data.ToString());
+                            matchingsStrings.Add(alert.Data.ToString());
                         }
                     }
                 }
                 else
                 {
-                    foreach (Alert alert in alerts)
+                    foreach (MyDataModel alert in alerts)
                     {
                         foreach (string searc in this.selectetRegions)
                         {
-                            if (alert.Data.Contains(searc))
+                            if (alert.Data.Equals(searc))
                             {
-                                TimeSpan timedif = DateTime.Now - alert.AlertDate;
-                                int diff = (int)timedif.TotalSeconds;
-                                if (diff < 10)
+                                TimeSpan timeDif = DateTime.Now - alert.AlertDate;
+                                if ((int)timeDif.TotalSeconds < 10)
                                 {
-                                    matchingStrings.Add(alert.Data.ToString());
+                                    matchingsStrings.Add(alert.Data.ToString());
                                 }
                             }
                         }
                     }
                 }
-                if (matchingStrings.Count > 0)
+                if(matchingsStrings.Count > 0)
                 {
-                    HashSet<string> uniq = new HashSet<string>(matchingStrings);
-                    matchingStrings = uniq.OrderBy(item => item).ToList();
+                    HashSet<string> uniq = new HashSet<string>(matchingsStrings);
+                    matchingsStrings = uniq.OrderBy(item => item.Trim()).ToList();
 
-                    this.placeUnderAttack = string.Join(", ", matchingStrings);
+                    this.placeUnderAttack = string.Join(", ", matchingsStrings);
+                    //
                 }
                 else
                 {
@@ -212,6 +218,35 @@ namespace RocketAlert
                 Console.WriteLine("Error searching JSON file: " + ex.Message);
                 this.placeUnderAttack = null;
             }
+        }
+
+        /// <summary>
+        /// Downloads the json asynchronous.
+        /// </summary>
+        /// <param name="url">The URL.</param>
+        /// <returns></returns>
+        static async Task<string> DownloadJsonAsync(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                // Download the content as a byte array
+                byte[] content = await client.GetByteArrayAsync(url);
+
+                // Decode the byte array using UTF-8 encoding
+                return Encoding.UTF8.GetString(content);
+            }
+        }
+
+        /// <summary>
+        /// Custom Object for holding information about alerts
+        /// </summary>
+        public class MyDataModel
+        {
+            [JsonProperty("alertDate")]
+            public DateTime AlertDate { get; set; }
+
+            [JsonProperty("data")]
+            public string Data { get; set; }
         }
 
         /// <summary>Handles the DoubleClick event of the RocketAlert control.</summary>
@@ -302,6 +337,16 @@ namespace RocketAlert
             }
 
             return data;
+        }
+
+        /// <summary>
+        /// Handles the Tick event of the UpdateData control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void UpdateData_Tick(object sender, EventArgs e)
+        {
+            WriteTextFile(this.selectetRegions, "RocketAlert", "SelectedRegionsSave");
         }
     }
 }
