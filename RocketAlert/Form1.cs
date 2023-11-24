@@ -56,6 +56,7 @@ namespace RocketAlert
 
             RocketAlert.ContextMenuStrip = contextMenuStrip1;
             timer1.Start();
+            UpdateData.Start();
 
             List<string> names = new List<string>();
             SettingForm settingForm;
@@ -130,6 +131,7 @@ namespace RocketAlert
             WriteTextFile(this.selectetRegions, "RocketAlert", "SelectedRegionsSave");
 
             timer1.Stop();
+            UpdateData.Stop();
             Environment.Exit(0);
         }
 
